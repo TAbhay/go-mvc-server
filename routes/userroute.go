@@ -2,6 +2,7 @@ package routes
 
 import (
 	"go-mvc-server/controllers"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +12,7 @@ func SetupRouter() *gin.Engine {
 
 	test := r.Group("/user")
 	{
-		test.GET("validate", controllers.userValidation)
+		test.GET("validate", controllers.UserValidation)
 	}
 	return r
 }

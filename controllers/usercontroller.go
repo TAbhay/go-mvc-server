@@ -1,14 +1,15 @@
 package controllers
 
 import (
+	"go-mvc-server/api"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func userValidation(c *gin.Context) {
+func UserValidation(c *gin.Context) {
 
-	res, err := api.callUserAPI(c)
+	res, err := api.CallUserAPI(c)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to call user API"})

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func callUserAPI(c *gin.Context) (map[string]interface{}, error) {
+func CallUserAPI(c *gin.Context) (map[string]interface{}, error) {
 
 	response, err := http.Get("https://reqres.in/api/users?page=2")
 	if err != nil {
