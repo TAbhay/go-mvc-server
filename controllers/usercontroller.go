@@ -12,7 +12,7 @@ func UserValidation(c *gin.Context) {
 	res, err := api.CallUserAPI(c)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to call user API"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
