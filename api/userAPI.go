@@ -1,15 +1,29 @@
 package api
 
 import (
+	"crypto/tls"
 	"encoding/json"
+	"net"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CallUserAPI(c *gin.Context) (map[string]interface{}, error) {
 
-	client := openshiftHTTPClient()
+	client := &http.Client{
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout:   15 * time.Second,
+				KeepAlive: 15 * time.Second,
+			}).Dial,
+			TLSClientConfig:       &tls.Config{InsecureSkipVerify: true},
+			TLSHandshakeTimeout:   15 * time.Second,
+			ResponseHeaderTimeout: 15 * time.Second,
+			ExpectContinueTimeout: 15 * time.Second,
+		},
+	}
 	req, err := http.NewRequest(http.MethodGet, "https://reqres.in/api/users?page=2", nil)
 	if err != nil {
 		return nil, err
