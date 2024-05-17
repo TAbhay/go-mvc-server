@@ -1,0 +1,42 @@
+
+{ 
+    "items": 
+    [
+        {
+            "type": "functional",
+            "name": "Login Test",
+            "description": "Tests the login functionality",
+            "passed": true
+        },
+        {
+            "type": "performance",
+            "name": "Load Test",
+            "description": "Tests the load handling of the app",
+            "passed": false
+        },
+        {
+            "type": "functional",
+            "name": "Login Test",
+            "description": "Tests the login functionality",
+            "passed": true
+        },
+        {
+            "type": "performance",
+            "name": "Load Test",
+            "description": "Tests the load handling of the app",
+            "passed": false
+        },
+        {
+            "type": "functional",
+            "name": "Login Test",
+            "description": "Tests the login functionality",
+            "passed": true
+        },
+        {
+            "type": "performance",
+            "name": "Load Test",
+            "description": "Tests the load handling of the app",
+            "passed": false
+        }
+    ] 
+}
