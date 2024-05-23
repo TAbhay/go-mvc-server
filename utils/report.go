@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/json"
@@ -29,66 +29,7 @@ type ReportData struct {
 	TestGroups []TestGroup
 }
 
-const htmlTemplate = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>QA Test Results</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .pass {
-            background-color: #d4edda;
-        }
-        .fail {
-            background-color: #f8d7da;
-        }
-    </style>
-</head>
-<body>
-    <h1>QA Test Results</h1>
-    {{ range .TestGroups }}
-    <h2>{{ .Name }}</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Passed</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{ range .Tests }}
-            <tr class="{{ if .Passed }}pass{{ else }}fail{{ end }}">
-                <td>{{ .Type }}</td>
-                <td>{{ .Name }}</td>
-                <td>{{ .Description }}</td>
-                <td>{{ if .Passed }}Yes{{ else }}No{{ end }}</td>
-            </tr>
-            {{ end }}
-        </tbody>
-    </table>
-    {{ end }}
-</body>
-</html>
-`
-
-func main() {
-	// Specify the directory containing the JSON files
+func GenerateReport() {
 	dir := "../reports"
 
 	files, err := os.ReadDir(dir)
@@ -117,6 +58,7 @@ func main() {
 	}
 
 	reportData := ReportData{TestGroups: allTestGroups}
+	htmlTemplate := "../templates/report.html"
 
 	tmpl, err := template.New("report").Parse(htmlTemplate)
 	if err != nil {
