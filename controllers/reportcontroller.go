@@ -1,51 +1,48 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	"go-mvc-server/api"
 	"go-mvc-server/utils"
-	"io/ioutil"
 	"net/http"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
 
 func ReportController(c *gin.Context) {
-	var data []string
-	if err := c.BindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	endpoints := []string{"fake/data", "fake/data"}
+
+	combinedData, err := api.FetchTestData(endpoints)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch test data"})
 		return
 	}
-	fmt.Println("Received data:", data)
-	files := make([]string, 0)
-	endpoints := []string{"user/validate", "user2/validate"}
-	for _, endpoint := range endpoints {
-		fmt.Println(endpoint)
-		resp, err := http.Get("http://localhost:8080/" + endpoint)
-		if err != nil {
-			continue
-		}
-		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-
-		filename := "response_" + endpoint + ".json"
-
-		err = utils.SaveToFile(filename, body)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		files = append(files, filepath.Join("reports", filename))
+	err = generateAndSaveReport(combinedData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate or save report"})
+		return
 	}
-	c.Header("Content-Disposition", "attachment; filename=responses.zip")
-	c.Header("Content-Type", "application/zip")
-	c.Writer.WriteHeader(http.StatusOK)
-	for _, file := range files {
-		c.FileAttachment(file, filepath.Base(file))
+
+	c.JSON(http.StatusOK, combinedData)
+}
+
+func generateAndSaveReport(combinedData map[string]interface{}) error {
+
+	combinedFilePath := "../reports/combined_responses.json"
+	combinedDataBytes, err := json.Marshal(combinedData)
+	if err != nil {
+		fmt.Println("Failed to marshal combined data:", err)
+		return err
 	}
+
+	err = utils.SaveToFile(combinedFilePath, combinedDataBytes)
+	if err != nil {
+		fmt.Println("Failed to save combined data to file:", err)
+		return err
+	}
+
+	utils.GenerateReport()
+	return nil
 }

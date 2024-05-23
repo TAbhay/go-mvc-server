@@ -9,9 +9,9 @@ import (
 
 func SetupRouter() *gin.Engine {
 
-	r := gin.New() // NEW
+	r := gin.New()
 
-	r.Use(gin.Recovery()) // NEW
+	r.Use(gin.Recovery())
 	r.Use(middlewares.LoggingMiddleware())
 
 	test := r.Group("/user")
@@ -21,6 +21,10 @@ func SetupRouter() *gin.Engine {
 	test2 := r.Group("/user2")
 	{
 		test2.GET("validate", controllers.UserValidation)
+	}
+	fake := r.Group("/fake")
+	{
+		fake.GET("data", controllers.FakeController)
 	}
 	master := r.Group("/report")
 	{

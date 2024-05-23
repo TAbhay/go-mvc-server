@@ -22,7 +22,7 @@ type TestGroup struct {
 }
 
 type TestResults struct {
-	TestGroups []TestGroup `json:"tests"`
+	Tests []TestGroup `json:"tests"`
 }
 
 type ReportData struct {
@@ -30,9 +30,9 @@ type ReportData struct {
 }
 
 func GenerateReport() {
-	dir := "../reports"
+	dir := "reports"
 
-	files, err := os.ReadDir(dir)
+	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Fatalf("Failed to read directory: %v", err)
 	}
@@ -53,14 +53,14 @@ func GenerateReport() {
 				continue
 			}
 
-			allTestGroups = append(allTestGroups, testResults.TestGroups...)
+			allTestGroups = append(allTestGroups, testResults.Tests...)
 		}
 	}
 
 	reportData := ReportData{TestGroups: allTestGroups}
-	htmlTemplate := "../templates/report.html"
+	htmlTemplate := "templates/template.html"
 
-	tmpl, err := template.New("report").Parse(htmlTemplate)
+	tmpl, err := template.ParseFiles(htmlTemplate)
 	if err != nil {
 		log.Fatalf("Failed to parse template: %v", err)
 	}
