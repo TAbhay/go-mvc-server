@@ -11,6 +11,7 @@ import (
 )
 
 func ReportController(c *gin.Context) {
+
 	endpoints := []string{"fake/data", "fake/data"}
 
 	combinedData, err := api.FetchTestData(endpoints)

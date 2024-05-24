@@ -11,6 +11,7 @@ import (
 
 type TestResult struct {
 	Type        string `json:"type"`
+	Api         string `json:"api"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Passed      bool   `json:"passed"`

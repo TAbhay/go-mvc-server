@@ -11,16 +11,20 @@ func FakeController(c *gin.Context) {
 		"name": "faker",
 		"tests": []map[string]interface{}{
 			{
-				"type":        "functional",
-				"name":        "Login Test",
-				"description": "Tests the login functionality",
-				"passed":      true,
+				"api":         "Operators",
+				"description": "Are required operators a present",
+				"response":    "a is not present",
+				"result":      "Failed",
+				"type":        "Test",
+				"value":       0,
 			},
 			{
-				"type":        "performance",
-				"name":        "Load Test",
-				"description": "Tests the load handling of the app",
-				"passed":      false,
+				"api":         "Operators",
+				"description": "Are required operators b present",
+				"response":    "b is present",
+				"result":      "Passed",
+				"type":        "Test",
+				"value":       1,
 			},
 		},
 	}

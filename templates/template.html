@@ -43,7 +43,7 @@
             {{ range .Tests }}
             <tr class="{{ if .Passed }}pass{{ else }}fail{{ end }}">
                 <td>{{ .Type }}</td>
-                <td>{{ .Name }}</td>
+                <td>{{ .Api }}</td>
                 <td>{{ .Description }}</td>
                 <td>{{ if .Passed }}Yes{{ else }}No{{ end }}</td>
             </tr>
