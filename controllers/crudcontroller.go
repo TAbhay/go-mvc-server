@@ -153,23 +153,30 @@ func UpdateCluster() gin.HandlerFunc {
 	}
 }
 
+// To filter by URL: GET /clusters/filter?url=example.com
+// To filter by name: GET /clusters/filter?name=exampleName
+// To filter by both: GET /clusters/filter?url=example.com&name=exampleName
+
 func FilterClusters() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		url := c.Query("url")
 		name := c.Query("name")
+		url := c.Query("url")
 
 		filter := bson.M{}
-		if url != "" {
-			filter["url"] = url
-		}
+
 		if name != "" {
-			filter["name"] = name
+			filter["name"] = bson.M{"$regex": name, "$options": "i"} // case-insensitive match
+		}
+
+		if url != "" {
+			filter["url"] = bson.M{"$regex": url, "$options": "i"} // case-insensitive match
 		}
 
 		var clusters []models.Cluster
+
 		results, err := clusterCollection.Find(ctx, filter)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -184,6 +191,11 @@ func FilterClusters() gin.HandlerFunc {
 				return
 			}
 			clusters = append(clusters, singleCluster)
+		}
+
+		if len(clusters) == 0 {
+			c.JSON(http.StatusNotFound, responses.UserResponse{Status: http.StatusNotFound, Message: "no clusters found", Data: map[string]interface{}{"data": clusters}})
+			return
 		}
 
 		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": clusters}})
