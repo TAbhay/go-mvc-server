@@ -1,9 +1,8 @@
 package api
 
 import (
-	"crypto/tls"
 	"encoding/json"
-	"net"
+	"go-mvc-server/utils"
 	"net/http"
 	"time"
 
@@ -12,18 +11,8 @@ import (
 
 func CallUserAPI(c *gin.Context) (map[string]interface{}, error) {
 
-	client := &http.Client{
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout:   15 * time.Second,
-				KeepAlive: 15 * time.Second,
-			}).Dial,
-			TLSClientConfig:       &tls.Config{InsecureSkipVerify: true},
-			TLSHandshakeTimeout:   15 * time.Second,
-			ResponseHeaderTimeout: 15 * time.Second,
-			ExpectContinueTimeout: 15 * time.Second,
-		},
-	}
+	client := utils.CustomHTTPClient()
+	time.Sleep(time.Second * 2)
 	req, err := http.NewRequest(http.MethodGet, "https://reqres.in/api/users?page=2", nil)
 	if err != nil {
 		return nil, err

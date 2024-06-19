@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -28,6 +29,49 @@ type TestResults struct {
 
 type ReportData struct {
 	TestGroups []TestGroup
+}
+
+func (tg *TestGroup) UnmarshalJSON(data []byte) error {
+	type Alias TestGroup
+	aux := &struct {
+		Tests interface{} `json:"tests"`
+		*Alias
+	}{
+		Alias: (*Alias)(tg),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	switch v := aux.Tests.(type) {
+	case []interface{}:
+		for _, item := range v {
+			switch item := item.(type) {
+			case []interface{}:
+				for _, subitem := range item {
+					var tr TestResult
+					b, _ := json.Marshal(subitem)
+					if err := json.Unmarshal(b, &tr); err != nil {
+						return err
+					}
+					tg.Tests = append(tg.Tests, tr)
+				}
+			case map[string]interface{}:
+				var tr TestResult
+				b, _ := json.Marshal(item)
+				if err := json.Unmarshal(b, &tr); err != nil {
+					return err
+				}
+				tg.Tests = append(tg.Tests, tr)
+			default:
+				return fmt.Errorf("unexpected type in tests field")
+			}
+		}
+	default:
+		return fmt.Errorf("unexpected type in tests field")
+	}
+
+	return nil
 }
 
 func GenerateReport() {
@@ -57,6 +101,7 @@ func GenerateReport() {
 			allTestGroups = append(allTestGroups, testResults.Tests...)
 		}
 	}
+	fmt.Println(allTestGroups)
 
 	reportData := ReportData{TestGroups: allTestGroups}
 	htmlTemplate := "templates/template.html"
